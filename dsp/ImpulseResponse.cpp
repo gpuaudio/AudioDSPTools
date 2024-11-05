@@ -35,7 +35,7 @@ dsp::ImpulseResponse::ImpulseResponse(const IRData& irData, const double sampleR
   this->_SetWeights();
 }
 
-double** dsp::ImpulseResponse::Process(double** inputs, const size_t numChannels, const size_t numFrames)
+DSP_SAMPLE** dsp::ImpulseResponse::Process(DSP_SAMPLE** inputs, const size_t numChannels, const size_t numFrames)
 {
   this->_PrepareBuffers(numChannels, numFrames);
   this->_UpdateHistory(inputs, numChannels, numFrames);
@@ -43,7 +43,7 @@ double** dsp::ImpulseResponse::Process(double** inputs, const size_t numChannels
   for (size_t i = 0, j = this->mHistoryIndex - this->mHistoryRequired; i < numFrames; i++, j++)
   {
     auto input = Eigen::Map<const Eigen::VectorXf>(&this->mHistory[j], this->mHistoryRequired + 1);
-    this->mOutputs[0][i] = (double)this->mWeight.dot(input);
+    this->mOutputs[0][i] = (DSP_SAMPLE)this->mWeight.dot(input);
   }
   // Copy out for more-than-mono.
   for (size_t c = 1; c < numChannels; c++)
